@@ -1,7 +1,7 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-    std::cout << "Hello world!" << std::endl;
+    std::cout << "Hello EuroLLVM!" << std::endl;
 }
 
 extern "C" const char *__asan_default_options() {

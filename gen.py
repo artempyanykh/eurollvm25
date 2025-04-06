@@ -13,10 +13,10 @@ def main():
     filename = "gen/src" + str(filenum) + ".cpp"
     with open(filename, "w") as f:
         # unique symbols
-        for i in range(100000):
+        for i in range(50000):
             f.write(f"int unique_{filenum}_{i} = {i};\n")
         # shared symbols
-        for i in range(1000):
+        for i in range(3000):
             f.write(f"int shared_{i} = {i};\n")
         
         
