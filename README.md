@@ -4,7 +4,7 @@ This is a support repository for my presentation at EuroLLVM 2025 (April) titled
 
 > Accidentally quadratic in compiler-rt/asan
 
-The slides are [here](./EuroLLVM 2025 Presentation. Artem Pianykh.pdf).
+The slides are [available here](./slides.pdf).
 
 ## Repro
 
