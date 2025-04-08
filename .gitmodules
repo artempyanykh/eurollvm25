@@ -1,0 +1,6 @@
+[submodule "llvm-before"]
+	path = llvm-before
+	url = git@github.com:llvm/llvm-project.git
+[submodule "llvm-after"]
+	path = llvm-after
+	url = git@github.com:llvm/llvm-project.git

@@ -1,16 +1,29 @@
-PATCHED_CLANG := /home/arr/dev/llvm-project-asan-after/build-reldeb/bin/clang++
+CLANG_BEFORE := llvm-before/build-reldeb/bin/clang++
+CLANG_AFTER := llvm-after/build-reldeb/bin/clang++
+
+$(CLANG_BEFORE):
+	cd llvm-before && \
+	time cmake -S llvm -B build-reldeb -G Ninja -DLLVM_ENABLE_PROJECTS="clang;lld;compiler-rt" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DLLVM_TARGETS_TO_BUILD=host -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DLLVM_USE_LINKER=lld && \
+	cd build-reldeb && \
+	time ninja clang projects/compiler-rt/lib/asan/all
+
+$(CLANG_AFTER):
+	cd llvm-after && \
+	time cmake -S llvm -B build-reldeb -G Ninja -DLLVM_ENABLE_PROJECTS="clang;lld;compiler-rt" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DLLVM_TARGETS_TO_BUILD=host -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DLLVM_USE_LINKER=lld && \
+	cd build-reldeb && \
+	time ninja clang projects/compiler-rt/lib/asan/all
 
 before_patch: main.cpp gen/lib1.so gen/lib2.so gen/lib3.so gen/lib4.so gen/lib5.so
-	clang++ $^ -o $@ -fsanitize=address -g2
+	$(CLANG_BEFORE) $^ -o $@ -fsanitize=address -g2
 
 gen/lib%.so: gen/src%.cpp
-	clang++ -shared -fpic $< -o $@ -fsanitize=address -g2
+	$(CLANG_BEFORE) -shared -fpic $< -o $@ -fsanitize=address -g2
 
 after_patch: main.cpp gen/patched_lib1.so gen/patched_lib2.so gen/patched_lib3.so gen/patched_lib4.so gen/patched_lib5.so
-	$(PATCHED_CLANG) $^ -o $@ -fsanitize=address -g2
+	$(CLANG_AFTER) $^ -o $@ -fsanitize=address -g2
 
 gen/patched_lib%.so: gen/src%.cpp
-	$(PATCHED_CLANG) -shared -fpic $< -o $@ -fsanitize=address -g2
+	$(CLANG_AFTER) -shared -fpic $< -o $@ -fsanitize=address -g2
 
 gen/src1.cpp: gen.py
 	python3 gen.py 1
@@ -28,5 +41,5 @@ gen/src5.cpp: gen.py
 	python3 gen.py 5
 
 clean:
-	rm -f program_before program_after
+	rm -f before_patch after_patch
 	rm -f gen/*
